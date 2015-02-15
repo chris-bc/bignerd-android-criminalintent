@@ -1,6 +1,7 @@
 package au.id.bennettscash.criminalintent;
 
-import android.app.Fragment;
+
+import android.support.v4.app.Fragment;
 
 /**
  * Created by chris on 15/02/15.
