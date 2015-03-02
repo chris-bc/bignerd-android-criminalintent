@@ -1,5 +1,7 @@
 package au.id.bennettscash.criminalintent;
 
+import android.text.format.DateFormat;
+
 import java.util.Date;
 import java.util.UUID;
 
@@ -49,6 +51,10 @@ public class Crime {
 
     public UUID getId() {
         return mId;
+    }
+
+    public CharSequence getDateString() {
+        return DateFormat.format("EEEE, MMM d, yyyy", mDate);
     }
 
 }
