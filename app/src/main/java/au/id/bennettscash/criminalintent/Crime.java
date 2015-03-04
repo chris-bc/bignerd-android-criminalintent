@@ -57,4 +57,8 @@ public class Crime {
         return DateFormat.format("EEEE, MMM d, yyyy", mDate);
     }
 
+    public CharSequence getTimeString() {
+        return DateFormat.format("h:m a", mDate);
+    }
+
 }
