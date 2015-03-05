@@ -61,4 +61,6 @@ public class Crime {
         return DateFormat.format("h:m a", mDate);
     }
 
+    public CharSequence getDateTimeString() { return getDateString() + " " + getTimeString(); }
+
 }
