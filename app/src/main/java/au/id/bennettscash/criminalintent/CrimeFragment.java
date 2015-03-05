@@ -24,12 +24,8 @@ import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
     public static final String EXTRA_CRIME_ID = "au.id.bennettscash.criminalIntent.crime_id";
-    public static final String DIALOG_DATE = "date";
-    public static final String DIALOG_TIME = "time";
     public static final String DIALOG_DATETIME = "datetime";
-    public static final int REQUEST_DATE = 0;
-    public static final int REQUEST_TIME = 1;
-    public static final int REQUEST_DATETIME = 2;
+    public static final int REQUEST_DATETIME = 0;
 
     private Crime mCrime;
     private EditText mTitleField;

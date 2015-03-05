@@ -20,6 +20,11 @@ import java.util.Date;
 public class DateTimeFragment extends DialogFragment {
     public static final String EXTRA_DATETIME = "au.id.bennettscash.criminalintent.datetime";
 
+    public static final String DIALOG_DATE = "date";
+    public static final String DIALOG_TIME = "time";
+    public static final int REQUEST_DATE = 0;
+    public static final int REQUEST_TIME = 1;
+
     private Date mDate;
 
     private Button dateButton;
@@ -57,8 +62,8 @@ public class DateTimeFragment extends DialogFragment {
             public void onClick(View v) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 DatePickerFragment dialog = DatePickerFragment.newInstance(mDate);
-                dialog.setTargetFragment(DateTimeFragment.this, CrimeFragment.REQUEST_DATE);
-                dialog.show(fm, CrimeFragment.DIALOG_DATE);
+                dialog.setTargetFragment(DateTimeFragment.this, REQUEST_DATE);
+                dialog.show(fm, DIALOG_DATE);
             }
         });
 
@@ -67,8 +72,8 @@ public class DateTimeFragment extends DialogFragment {
             public void onClick(View v) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 TimePickerFragment dialog = TimePickerFragment.newInstance(mDate);
-                dialog.setTargetFragment(DateTimeFragment.this, CrimeFragment.REQUEST_TIME);
-                dialog.show(fm, CrimeFragment.DIALOG_TIME);
+                dialog.setTargetFragment(DateTimeFragment.this, REQUEST_TIME);
+                dialog.show(fm, DIALOG_TIME);
             }
         });
 
@@ -90,7 +95,7 @@ public class DateTimeFragment extends DialogFragment {
         Calendar oldDate = Calendar.getInstance();
         oldDate.setTime(mDate);
 
-        if (request == CrimeFragment.REQUEST_DATE) {
+        if (request == REQUEST_DATE) {
             Date date = (Date) i.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             Calendar newDate = Calendar.getInstance();
             newDate.setTime(date);
@@ -98,7 +103,7 @@ public class DateTimeFragment extends DialogFragment {
             oldDate.set(Calendar.DAY_OF_MONTH, newDate.get(Calendar.DAY_OF_MONTH));
             oldDate.set(Calendar.MONTH, newDate.get(Calendar.MONTH));
             oldDate.set(Calendar.YEAR, newDate.get(Calendar.YEAR));
-        } else if (request == CrimeFragment.REQUEST_TIME) {
+        } else if (request == REQUEST_TIME) {
             Date date = (Date) i.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
             Calendar newDate = Calendar.getInstance();
             newDate.setTime(date);
