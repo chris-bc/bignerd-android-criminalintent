@@ -1,13 +1,17 @@
 package au.id.bennettscash.criminalintent;
 
 import android.content.Context;
+import android.os.Environment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONTokener;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,7 +41,12 @@ public class CriminalIntentJSONSerialiser {
         // Write the file to disk
         Writer writer = null;
         try {
-            OutputStream out = mContext.openFileOutput(mFilename, Context.MODE_PRIVATE);
+//            OutputStream out = mContext.openFileOutput(mFilename, Context.MODE_PRIVATE);
+            // Can we use external storage?
+            // Should be using getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) but emulator is buggy
+            File o = new File (Environment.getExternalStorageDirectory()
+                                            .getAbsolutePath() + "/" + mFilename);
+            FileOutputStream out = new FileOutputStream(o);
             writer = new OutputStreamWriter(out);
             writer.write(array.toString());
         } finally {
@@ -51,7 +60,8 @@ public class CriminalIntentJSONSerialiser {
         BufferedReader reader = null;
         try {
             // Open and read the file into a StringBuilder
-            InputStream in = mContext.openFileInput(mFilename);
+//            InputStream in = mContext.openFileInput(mFilename);
+            FileInputStream in = new FileInputStream(new File(Environment.getExternalStorageDirectory().getAbsolutePath() +"/" + mFilename));
             reader = new BufferedReader(new InputStreamReader(in));
             StringBuilder jsonString = new StringBuilder();
             String line = null;
