@@ -43,8 +43,7 @@ public class CriminalIntentJSONSerialiser {
         try {
 //            OutputStream out = mContext.openFileOutput(mFilename, Context.MODE_PRIVATE);
             // Can we use external storage?
-            // Should be using getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) but emulator is buggy
-            File o = new File (Environment.getExternalStorageDirectory()
+            File o = new File (Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                                             .getAbsolutePath() + "/" + mFilename);
             FileOutputStream out = new FileOutputStream(o);
             writer = new OutputStreamWriter(out);
@@ -61,7 +60,7 @@ public class CriminalIntentJSONSerialiser {
         try {
             // Open and read the file into a StringBuilder
 //            InputStream in = mContext.openFileInput(mFilename);
-            FileInputStream in = new FileInputStream(new File(Environment.getExternalStorageDirectory().getAbsolutePath() +"/" + mFilename));
+            FileInputStream in = new FileInputStream(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +"/" + mFilename));
             reader = new BufferedReader(new InputStreamReader(in));
             StringBuilder jsonString = new StringBuilder();
             String line = null;
