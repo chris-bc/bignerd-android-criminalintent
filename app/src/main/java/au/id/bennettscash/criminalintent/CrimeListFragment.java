@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v7.internal.view.menu.MenuDialogHelper;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -97,6 +98,11 @@ public class CrimeListFragment extends ListFragment {
         }
     }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        getActivity().getMenuInflater().inflate(R.menu.crime_list_item_context, menu);
+    }
+
     private class CrimeAdapter extends ArrayAdapter<Crime> {
         public CrimeAdapter(ArrayList<Crime> crimes) {
             super(getActivity(), 0, crimes);
@@ -141,7 +147,26 @@ public class CrimeListFragment extends ListFragment {
             if (mSubtitleVisible)
                 getActivity().getActionBar().setSubtitle(R.string.subtitle);
         }
+
+        ListView listView = (ListView) v.findViewById(android.R.id.list);
+        registerForContextMenu(listView);
         return v;
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        int pos = info.position;
+        CrimeAdapter adapter = (CrimeAdapter)getListAdapter();
+        Crime crime = adapter.getItem(pos);
+
+        switch (item.getItemId()) {
+            case R.id.menu_item_delete_crime:
+                CrimeLab.get(getActivity()).deleteCrime(crime);
+                adapter.notifyDataSetChanged();
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
     private void addCrime() {
