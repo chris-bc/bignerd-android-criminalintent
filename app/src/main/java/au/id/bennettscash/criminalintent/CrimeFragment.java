@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Camera;
+import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -167,7 +168,7 @@ public class CrimeFragment extends Fragment {
                     return;
 
                 FragmentManager fm = getActivity().getSupportFragmentManager();
-                String path = getActivity().getFileStreamPath(p.getFilename()).getAbsolutePath();
+                String path = p.getFilename();
                 ImageFragment.newInstance(path).show(fm, DIALOG_IMAGE);
             }
         });
@@ -203,8 +204,10 @@ public class CrimeFragment extends Fragment {
         Photo p = mCrime.getPhoto();
         BitmapDrawable b = null;
         if (p != null) {
-            String path = getActivity().getFileStreamPath(p.getFilename()).getAbsolutePath();
+            String path = p.getFilename();
             b = PictureUtils.getScaledDrawable(getActivity(), path);
+            if (!p.isLandscape())
+                mPhotoView.setRotation(90f);
         }
         mPhotoView.setImageDrawable(b);
     }
@@ -221,7 +224,7 @@ public class CrimeFragment extends Fragment {
             // Create a new photo object and attach it to the crime
             String filename = data.getStringExtra(CrimeCameraFragment.EXTRA_PHOTO_FILENAME);
             if (filename != null) {
-                Photo p = new Photo(filename);
+                Photo p = new Photo(getActivity().getFileStreamPath(filename).getAbsolutePath());
                 mCrime.setPhoto(p);
                 showPhoto();
             }
