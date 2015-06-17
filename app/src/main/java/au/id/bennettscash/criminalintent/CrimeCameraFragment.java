@@ -3,11 +3,14 @@ package au.id.bennettscash.criminalintent;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.drawable.GradientDrawable;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -92,7 +95,7 @@ public class CrimeCameraFragment extends Fragment {
 
         mSurfaceView = (SurfaceView)v.findViewById(R.id.crime_camera_surfaceView);
         SurfaceHolder holder = mSurfaceView.getHolder();
-        //deprecated code holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS)
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS); // Was commented as deprecated?
         holder.addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
@@ -110,12 +113,25 @@ public class CrimeCameraFragment extends Fragment {
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
                 if (mCamera == null) return;
 
+                // Do we need to stop the preview before changing it?
+                try {
+                    mCamera.stopPreview();
+                } catch (Exception e) {
+                    // Ignore - It probably hadn't been started anyway
+                }
+
                 // Update the camera preview size
                 Camera.Parameters parameters = mCamera.getParameters();
                 Camera.Size s = getBestSupportedSize(parameters.getSupportedPreviewSizes(), width, height);
-                parameters.setPreviewSize(s.width, s.height);
+                if (width <= height)
+                    parameters.setPreviewSize(s.width, s.height);
+                else
+                    parameters.setPictureSize(s.height, s.width);
                 s = getBestSupportedSize(parameters.getSupportedPictureSizes(), width, height);
-                parameters.setPictureSize(s.width, s.height);
+                if (width <= height)
+                    parameters.setPictureSize(s.width, s.height);
+                else
+                    parameters.setPictureSize(s.height, s.width);
                 mCamera.setParameters(parameters);
                 try {
                     mCamera.startPreview();
