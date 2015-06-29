@@ -16,6 +16,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +30,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -172,6 +174,7 @@ public class CrimeFragment extends Fragment {
                 ImageFragment.newInstance(path).show(fm, DIALOG_IMAGE);
             }
         });
+        registerForContextMenu(mPhotoView);
 
         mPhotoButton = (ImageButton)v.findViewById(R.id.crime_imageButton);
         mPhotoButton.setOnClickListener(new View.OnClickListener() {
@@ -251,6 +254,34 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        getActivity().getMenuInflater().inflate(R.menu.crime_list_item_context, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_delete_crime:
+                // Delete the photo in this instance (yay reuse)
+                Photo p = mCrime.getPhoto();
+                if (p != null) {
+                    String filename = p.getFilename();
+                    if (filename != null) {
+                        if ((new File(filename)).delete()) {
+                            Log.d(TAG, "Successfully deleted photo: " + filename);
+                        } else {
+                            Log.d(TAG, "Failed to delete photo: " + filename);
+                        }
+                        mCrime.setPhoto(null);
+                        showPhoto();
+                    }
+                }
+                return true;
+        }
+        return super.onContextItemSelected(item);
     }
 
 
