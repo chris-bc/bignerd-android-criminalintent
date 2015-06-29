@@ -206,8 +206,8 @@ public class CrimeFragment extends Fragment {
         if (p != null) {
             String path = p.getFilename();
             b = PictureUtils.getScaledDrawable(getActivity(), path);
-            if (!p.isLandscape())
-                mPhotoView.setRotation(90f);
+//            if (!p.isLandscape())
+//                mPhotoView.setRotation(90f);
         }
         mPhotoView.setImageDrawable(b);
     }

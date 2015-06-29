@@ -111,6 +111,8 @@ public class CrimeCameraFragment extends Fragment {
 
             @Override
             public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+                Boolean isPortrait = false;
+
                 if (mCamera == null) return;
 
                 // Do we need to stop the preview before changing it?
@@ -124,11 +126,14 @@ public class CrimeCameraFragment extends Fragment {
                 Camera.Parameters parameters = mCamera.getParameters();
                 Camera.Size s = getBestSupportedSize(parameters.getSupportedPreviewSizes(), width, height);
                 if (width <= height)
+                    isPortrait = true;
+
+                if ((isPortrait && s.width <= s.height) || (!isPortrait && s.width > s.height))
                     parameters.setPreviewSize(s.width, s.height);
                 else
-                    parameters.setPictureSize(s.height, s.width);
+                    parameters.setPreviewSize(s.height, s.width);
                 s = getBestSupportedSize(parameters.getSupportedPictureSizes(), width, height);
-                if (width <= height)
+                if ((isPortrait && s.width <= s.height) || (!isPortrait && s.width > s.height))
                     parameters.setPictureSize(s.width, s.height);
                 else
                     parameters.setPictureSize(s.height, s.width);
