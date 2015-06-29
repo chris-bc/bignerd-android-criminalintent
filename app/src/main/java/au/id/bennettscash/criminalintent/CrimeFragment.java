@@ -221,10 +221,22 @@ public class CrimeFragment extends Fragment {
             mCrime.setDate(date);
             updateDate();
         } else if (requestCode == REQUEST_PHOTO) {
+            // Do we have an old photo that needs deleting?
+            Photo p = mCrime.getPhoto();
+            if (p != null) {
+                String filename = p.getFilename();
+                if (filename != null) {
+                    if ((new java.io.File(filename)).delete())
+                        Log.d(TAG, "Successfully deleted old photo " + filename);
+                    else
+                        Log.d(TAG, "Failed to delete old photo " + filename);
+                }
+            }
+
             // Create a new photo object and attach it to the crime
             String filename = data.getStringExtra(CrimeCameraFragment.EXTRA_PHOTO_FILENAME);
             if (filename != null) {
-                Photo p = new Photo(getActivity().getFileStreamPath(filename).getAbsolutePath());
+                p = new Photo(getActivity().getFileStreamPath(filename).getAbsolutePath());
                 mCrime.setPhoto(p);
                 showPhoto();
             }
