@@ -3,12 +3,14 @@ package au.id.bennettscash.criminalintent;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Camera;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NavUtils;
@@ -43,6 +45,7 @@ public class CrimeFragment extends Fragment {
     public static final String TAG = "CrimeFragment";
     public static final int REQUEST_DATETIME = 0;
     public static final int REQUEST_PHOTO = 1;
+    public static final int REQUEST_CONTACT = 2;
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -201,6 +204,20 @@ public class CrimeFragment extends Fragment {
             }
         });
 
+        mSuspectButton = (Button)v.findViewById(R.id.crime_suspectButton);
+        mSuspectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_PICK,
+                        ContactsContract.Contacts.CONTENT_URI);
+                startActivityForResult(i, REQUEST_CONTACT);
+            }
+        });
+
+        if (mCrime.getSuspect() != null) {
+            mSuspectButton.setText(mCrime.getSuspect());
+        }
+
         // If camera is not available disable camera functionality
         PackageManager pm = getActivity().getPackageManager();
         boolean hasCamera = pm.hasSystemFeature(PackageManager.FEATURE_CAMERA) ||
@@ -280,6 +297,29 @@ public class CrimeFragment extends Fragment {
                 mCrime.setPhoto(p);
                 showPhoto();
             }
+        } else if (requestCode == REQUEST_CONTACT) {
+            Uri contactUri = data.getData();
+
+            // Specify which fields you want your query to return values for
+            String[] queryFields = new String[] {
+                    ContactsContract.Contacts.DISPLAY_NAME
+            };
+            // Perform your query - the contactUri is like a where clause
+            Cursor c = getActivity().getContentResolver()
+                    .query(contactUri, queryFields, null, null, null);
+
+            // Double check that you actually got results
+            if (c.getCount() == 0) {
+                c.close();
+                return;
+            }
+
+            // Get the first column of the first row - Name
+            c.moveToFirst();
+            String suspect = c.getString(0);
+            mCrime.setSuspect(suspect);
+            mSuspectButton.setText(suspect);
+            c.close();
         }
     }
 
