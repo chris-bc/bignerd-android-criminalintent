@@ -18,6 +18,7 @@ public class Crime {
     private static final String JSON_DATE = "date";
     private static final String JSON_PHOTO = "photo";
     private static final String JSON_SUSPECT = "suspect";
+    private static final String JSON_PHONE = "phone";
 
     private UUID mId;
     private String mTitle;
@@ -25,6 +26,7 @@ public class Crime {
     private boolean mSolved;
     private Photo mPhoto;
     private String mSuspect;
+    private String mSuspectPhone;
 
     @Override
     public String toString() {
@@ -69,6 +71,9 @@ public class Crime {
         if (json.has(JSON_SUSPECT)) {
             mSuspect = json.getString(JSON_SUSPECT);
         }
+        if (json.has(JSON_PHONE)) {
+            mSuspectPhone = json.getString(JSON_PHONE);
+        }
     }
 
     public JSONObject toJSON() throws JSONException {
@@ -81,6 +86,7 @@ public class Crime {
             json.put(JSON_PHOTO, mPhoto.toJSON());
         }
         json.put(JSON_SUSPECT, mSuspect);
+        json.put(JSON_PHONE, mSuspectPhone);
         return json;
     }
 
@@ -95,6 +101,10 @@ public class Crime {
     public String getSuspect() { return mSuspect; }
 
     public void setSuspect (String s) { mSuspect = s; }
+
+    public void setSuspectPhone (String s) { mSuspectPhone = s;}
+
+    public String getSuspectPhone() { return mSuspectPhone; }
 
     public UUID getId() {
         return mId;

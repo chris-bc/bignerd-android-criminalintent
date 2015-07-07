@@ -55,6 +55,7 @@ public class CrimeFragment extends Fragment {
     private ImageView mPhotoView;
     private Button mReportButton;
     private Button mSuspectButton;
+    private Button mPhoneButton;
 
     public CrimeFragment() {
         // Required empty public constructor
@@ -214,6 +215,17 @@ public class CrimeFragment extends Fragment {
             }
         });
 
+        mPhoneButton = (Button)v.findViewById(R.id.crime_phoneButton);
+        mPhoneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_DIAL,
+                        Uri.parse("tel:" + mCrime.getSuspectPhone()));
+                startActivity(i);
+            }
+        });
+        mPhoneButton.setEnabled(mCrime.getSuspectPhone() != null);
+
         if (mCrime.getSuspect() != null) {
             mSuspectButton.setText(mCrime.getSuspect());
         }
@@ -302,7 +314,9 @@ public class CrimeFragment extends Fragment {
 
             // Specify which fields you want your query to return values for
             String[] queryFields = new String[] {
-                    ContactsContract.Contacts.DISPLAY_NAME
+                    ContactsContract.Contacts.DISPLAY_NAME,
+                    ContactsContract.Contacts._ID,
+                    ContactsContract.Contacts.HAS_PHONE_NUMBER
             };
             // Perform your query - the contactUri is like a where clause
             Cursor c = getActivity().getContentResolver()
@@ -319,8 +333,38 @@ public class CrimeFragment extends Fragment {
             String suspect = c.getString(0);
             mCrime.setSuspect(suspect);
             mSuspectButton.setText(suspect);
+
+            // Is there a phone number?
+            if (!c.getString(2).endsWith("0")) {
+                // Get the phone number based on the id
+                suspect = getContactPhoneForId(c.getString(1));
+            } else
+                suspect = null;
+            mCrime.setSuspectPhone(suspect);
+            mPhoneButton.setEnabled(mCrime.getSuspectPhone() != null);
             c.close();
         }
+    }
+
+    private String getContactPhoneForId(String id) {
+        String retVal = "";
+        Cursor phone = getActivity().getContentResolver()
+                .query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID +
+                                " = " + id, null, null);
+        while (phone.moveToNext()) {
+            switch (phone.getInt(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE))) {
+                case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
+                    //
+                case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
+                    //
+                case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
+                    //
+                    retVal = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            }
+        }
+        phone.close();
+        return retVal;
     }
 
     @Override
