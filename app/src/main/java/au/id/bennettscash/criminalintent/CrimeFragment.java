@@ -56,6 +56,23 @@ public class CrimeFragment extends Fragment {
     private Button mReportButton;
     private Button mSuspectButton;
     private Button mPhoneButton;
+    private Callbacks mCallbacks;
+
+    public interface Callbacks {
+        void onCrimeUpdated(Crime crime);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
 
     public CrimeFragment() {
         // Required empty public constructor
@@ -133,6 +150,8 @@ public class CrimeFragment extends Fragment {
         mTitleField.addTextChangedListener(new TextWatcher() {
             public void onTextChanged(CharSequence c, int start, int before, int count) {
                 mCrime.setTitle(c.toString());
+                mCallbacks.onCrimeUpdated(mCrime);
+                getActivity().setTitle(mCrime.getTitle());
             }
 
             public void beforeTextChanged(CharSequence c, int start, int count, int after) {
@@ -164,6 +183,7 @@ public class CrimeFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // Set the crime's solved property
                 mCrime.setSolved(isChecked);
+                mCallbacks.onCrimeUpdated(mCrime);
             }
         });
 
@@ -285,6 +305,8 @@ public class CrimeFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) return;
 
+        mCallbacks.onCrimeUpdated(mCrime);
+
         if (requestCode == REQUEST_DATETIME) {
             Date date = (Date)data.getSerializableExtra(DateTimeFragment.EXTRA_DATETIME);
             mCrime.setDate(date);
@@ -365,16 +387,6 @@ public class CrimeFragment extends Fragment {
         }
         phone.close();
         return retVal;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     @Override

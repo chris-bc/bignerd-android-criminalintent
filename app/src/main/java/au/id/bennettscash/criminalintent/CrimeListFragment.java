@@ -243,4 +243,8 @@ public class CrimeListFragment extends ListFragment {
 
     }
 
+    public void updateUI() {
+        ((CrimeAdapter)getListAdapter()).notifyDataSetChanged();
+    }
+
 }
